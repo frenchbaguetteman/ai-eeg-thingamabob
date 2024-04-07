@@ -1,0 +1,67 @@
+import serial
+import time
+import os
+import numpy as np
+
+# Ask for the number of categories
+num_categories = int(input("Enter the number of different categories of actions: "))
+
+# Create an empty dictionary to store the action names
+actions = {}
+
+# Open serial connnection to arduino
+arduino = serial.Serial('COM5', 38400)
+
+# Ask for the name of each action category
+for i in range(num_categories):
+    action_name = input(f"Enter the name of action {i}: ")
+    actions[f"action{i}"] = action_name
+
+# Ask for the amount of samples to take
+num_samples = int(input("Enter the amount of samples to take: "))
+values_per_sample = int(input("Enter the amount of values per sample: "))
+
+#############################################################
+# TO BE IMPLEMENTED: GUI INPUTS FOR MORE DYNAMIC ADJUSTMENT #
+# MAKE IT PRESENTABLE, BETTER DEMOS AND EVERYTHING          #
+#############################################################
+
+# Create a folder for each action category
+for i in range(num_categories):
+    action_name = actions[f"action{i}"]
+    folder_name = f"{action_name}_folder"
+    if not os.path.exists(folder_name):
+        os.makedirs(folder_name)
+    # Print the action name
+    print(f"Think of the action: {action_name}")
+    # Wait for 500ms
+    time.sleep(0.5)
+    # Print taking sample
+    print("Taking sample")
+    filenum = 0
+    serial_file_name = f"{action_name}_{filenum}.csv"
+        # Write the samples to the CSV file
+    while filenum<num_samples:
+        
+        while (arduino.inWaiting()==0):
+            pass
+        try:  
+            arduinoString = float(arduino.readline().decode('utf-8').rstrip('\r\n'))
+            num+=1
+            if (10<num<=110):
+                array = np.append(array, arduinoString)
+        except ValueError:
+            continue
+        if (num==110):
+            np.savetxt(os.path.join(folder_name, serial_file_name), array, delimiter=',')
+            array = np.array([])
+            num = 0
+            filenum+=1
+            print(f"Think of the action: {action_name}")
+            # Wait for 500ms
+            time.sleep(0.5)
+            # Print taking sample
+            print("Taking sample")
+
+            serial_file_name = f"{action_name}_{filenum}.csv"
+
