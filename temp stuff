@@ -1,0 +1,12 @@
+import numpy as np
+import os
+import pathlib
+
+# Specify the file path
+file_path = "data/neutral/neutral4.txt"
+
+# Load the file into a NumPy array
+data = np.loadtxt(pathlib.Path(file_path))
+data = np.fft.rfft(data).real
+
+output = np.savetxt("data/neutral/neutral4.txt", data, delimiter=',')
