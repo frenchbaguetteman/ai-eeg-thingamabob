@@ -2,7 +2,7 @@ import serial
 import numpy as np
 
 # Open serial connection
-arduino = serial.Serial('COM5', 38400)  # Adjust COM port and baud rate as needed
+arduino = serial.Serial('COM3', 38400)  # Adjust COM port and baud rate as needed
 num = 0
 filenum = 0
 array = np.array([])
